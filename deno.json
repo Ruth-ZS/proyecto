@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"]
+    "lib": ["deno.ns", "dom", "dom.iterable", "esnext"]
   },
   "imports": {
     "oak": "https://deno.land/x/oak@v11.1.0/mod.ts",
