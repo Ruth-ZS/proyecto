@@ -1,4 +1,4 @@
-# 📌 P5 — Instrucciones para ejecutar el proyecto
+# 📌 Instrucciones para ejecutar el proyecto
 
 ## 🔁 Clonar el repositorio
 
