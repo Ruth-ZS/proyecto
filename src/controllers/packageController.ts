@@ -67,3 +67,32 @@ export async function getPackage(ctx: RouterContext) {
     };
   }
 }
+
+// para actualizar el estado de los paquetes pendientes de la lista
+export async function updatePackageStatus(ctx: RouterContext) {
+  try {
+    const id = Number(ctx.params.id);
+    const { status } = await ctx.request.body().value;
+
+    if (!["entregado", "retirado"].includes(status)) {
+      ctx.response.status = 400;
+      ctx.response.body = { error: "Estado inválido para actualización" };
+      return;
+    }
+
+    const pickup_date = status === "retirado" ? new Date() : null;
+
+    const updated = await updateStatusById(id, status, pickup_date);
+    if (!updated) {
+      ctx.response.status = 404;
+      ctx.response.body = { error: "Paquete no encontrado o no es pendiente" };
+      return;
+    }
+
+    ctx.response.status = 200;
+    ctx.response.body = { message: "Estado actualizado con éxito" };
+  } catch (error) {
+    ctx.response.status = 500;
+    ctx.response.body = { error: error.message };
+  }
+}

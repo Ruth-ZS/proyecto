@@ -4,87 +4,130 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestión de Paquetes</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <style>
+    :root {
+      --primary: #4CAF50;
+      --primary-hover: #388E3C;
+      --gray-light: #f4f4f4;
+      --gray-dark: #333;
+      --radius: 10px;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+  
     body {
-      font-family: Arial, sans-serif;
-      max-width: 800px;
-      margin: 0 auto;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #fdfdfd;
+      margin: 0;
       padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--gray-dark);
     }
+  
     h1 {
-      color: #333;
-      text-align: center;
+      margin-bottom: 40px;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--gray-dark);
     }
+  
     .form-section {
-      background: #f5f5f5;
-      padding: 20px;
-      border-radius: 8px;
+      background: var(--gray-light);
+      padding: 30px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 700px;
+    }
+  
+    .form-group {
       margin-bottom: 20px;
     }
-    .form-group {
-      margin-bottom: 15px;
-    }
+  
     label {
+      font-weight: 600;
       display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
+      margin-bottom: 6px;
     }
-    input, textarea {
+  
+    input, select, textarea {
       width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      border-radius: var(--radius);
+      font-size: 14px;
       box-sizing: border-box;
+      transition: border 0.2s ease;
     }
+  
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+  
     button {
-      background: #4CAF50;
+      background-color: var(--primary);
       color: white;
       border: none;
-      padding: 10px 15px;
-      cursor: pointer;
-      border-radius: 4px;
+      padding: 12px 20px;
       font-size: 16px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background-color 0.3s ease;
     }
+  
     button:hover {
-      background: #45a049;
+      background-color: var(--primary-hover);
     }
+  
     table {
       width: 100%;
+      max-width: 700px;
       border-collapse: collapse;
-      margin-top: 20px;
+      margin-top: 40px;
+      box-shadow: var(--shadow);
     }
+  
     th, td {
-      border: 1px solid #ddd;
-      padding: 12px;
+      padding: 14px;
       text-align: left;
     }
+  
     th {
-      background-color: #4CAF50;
+      background-color: var(--primary);
       color: white;
     }
+  
     tr:nth-child(even) {
-      background-color: #f2f2f2;
+      background-color: #f9f9f9;
     }
+  
     .error-message {
-      color: red;
+      color: #e53935;
       font-size: 12px;
       margin-top: 4px;
     }
+  
     .error-field {
-      border-color: red !important;
+      border-color: #e53935 !important;
     }
+  
     #toast {
       position: fixed;
       top: 20px;
       right: 20px;
-      background: #4CAF50;
+      background: var(--primary);
       color: white;
-      padding: 12px;
-      border-radius: 4px;
+      padding: 14px 20px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
       display: none;
       z-index: 1000;
     }
   </style>
+  
 </head>
 <body>
   <h1>Gestión de Paquetes</h1>
@@ -112,7 +155,12 @@
       
       <div class="form-group">
         <label for="status">Estado</label>
-        <input type="text" id="status" name="status" required>
+        <select id="status" name="status" required>
+          <option value="">-- Selecciona estado --</option>
+          <option value="pendiente">Pendiente</option>
+          <option value="entregado">Entregado</option>
+          <option value="retirado">Retirado</option>
+        </select>        
         <small id="status_error" class="error-message"></small>
       </div>
       

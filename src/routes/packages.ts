@@ -2,7 +2,8 @@ import { Router } from "../../deps.ts";
 import {
   registerPackage,
   getPackages,
-  getPackage
+  getPackage,
+  updatePackageStatus
 } from "../controllers/packageController.ts";
 
 const router = new Router();
@@ -10,6 +11,8 @@ const router = new Router();
 router
   .get("/api/packages", getPackages)
   .get("/api/packages/:id", getPackage)
-  .post("/api/packages", registerPackage);
+  .post("/api/packages", registerPackage)
+  .put("/api/packages/:id/status", updatePackageStatus);
+
 
 export default router;
