@@ -17,14 +17,16 @@
   
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #fdfdfd;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      color: var(--gray-dark);
+  background-color: white; /* Fondo blanco total */
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--gray-dark);
+  min-height: 100vh;
     }
+
   
     h1 {
       margin-bottom: 40px;
@@ -34,13 +36,15 @@
     }
   
     .form-section {
-      background: var(--gray-light);
-      padding: 30px;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      width: 100%;
-      max-width: 700px;
+      background: white;
+  padding: 30px;
+  border-radius: var(--radius);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* sombra más notoria */
+  width: 100%;
+  max-width: 700px;
+  transition: transform 0.3s ease;
     }
+  
   
     .form-group {
       margin-bottom: 20px;
@@ -83,11 +87,14 @@
     }
   
     table {
-      width: 100%;
-      max-width: 700px;
-      border-collapse: collapse;
-      margin-top: 40px;
-      box-shadow: var(--shadow);
+      background: white; /* tabla blanca */
+  width: 100%;
+  max-width: 700px;
+  border-collapse: collapse;
+  margin-top: 40px;
+  box-shadow: var(--shadow);
+  border-radius: var(--radius);
+  overflow: hidden;
     }
   
     th, td {
@@ -180,111 +187,144 @@
     <div id="toast">Paquete registrado con éxito!</div>
   </div>
 
-  <h2>Lista de Paquetes</h2>
-  <table id="packagesTable">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Departamento</th>
-        <th>Remitente</th>
-        <th>Fecha Entrega</th>
-        <th>Estado</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <!-- ... HEAD igual que antes ... -->
 
-  <script>
-    const API_URL = 'http://localhost:8000/api/packages';
+<h2>Lista de Paquetes</h2>
+<table id="packagesTable">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Departamento</th>
+      <th>Remitente</th>
+      <th>Fecha Entrega</th>
+      <th>Estado</th>
+      <th>Acciones</th> <!-- nueva columna -->
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
 
-    function showToast(message, isSuccess = true) {
-      const toast = document.getElementById("toast");
-      toast.textContent = message;
-      toast.style.background = isSuccess ? "#4CAF50" : "#f44336";
-      toast.style.display = "block";
-      setTimeout(() => toast.style.display = "none", 3000);
-    }
+<script>
+  const API_URL = 'http://localhost:8000/api/packages';
 
-    function clearErrors() {
-      document.querySelectorAll(".error-message").forEach(el => el.textContent = "");
-      document.querySelectorAll(".error-field").forEach(el => el.classList.remove("error-field"));
-    }
+  function showToast(message, isSuccess = true) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.style.background = isSuccess ? "#4CAF50" : "#f44336";
+    toast.style.display = "block";
+    setTimeout(() => toast.style.display = "none", 3000);
+  }
 
-    async function loadPackages() {
-      try {
-        const response = await fetch(API_URL);
-        if (!response.ok) throw new Error(await response.text());
-        const packages = await response.json();
-        
-        const tbody = document.querySelector('#packagesTable tbody');
-        tbody.innerHTML = packages.map(pkg => `
-          <tr>
-            <td>${pkg.id}</td>
-            <td>${pkg.apartment_number}</td>
-            <td>${pkg.sender}</td>
-            <td>${formatDate(pkg.delivery_date)}</td>
-            <td>${pkg.status}</td>
-          </tr>
-        `).join('');
-      } catch (error) {
-        showToast("Error al cargar paquetes", false);
-        console.error(error);
-      }
-    }
+  function clearErrors() {
+    document.querySelectorAll(".error-message").forEach(el => el.textContent = "");
+    document.querySelectorAll(".error-field").forEach(el => el.classList.remove("error-field"));
+  }
 
-    document.getElementById('packageForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      clearErrors();
-
-      const formData = {
-        apartment_number: document.getElementById('apartment_number').value.trim(),
-        sender: document.getElementById('sender').value.trim(),
-        delivery_date: document.getElementById('delivery_date').value,
-        status: document.getElementById('status').value.trim(),
-        qr_code: document.getElementById('qr_code').value.trim(),
-        notes: document.getElementById('notes').value.trim()
-      };
-
-      try {
-        const response = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData)
-        });
-        
-        const data = await response.json();
-        
-        if (response.ok) {
-          document.getElementById('packageForm').reset();
-          showToast("Paquete registrado con éxito");
-          loadPackages();
-        } else {
-          if (data.type === "ValidationError") {
-            const field = data.error.match(/campo (\w+)/i)?.[1];
-            if (field) {
-              const input = document.getElementById(field);
-              input?.classList.add("error-field");
-              document.getElementById(`${field}_error`).textContent = data.error;
-            } else {
-              showToast(data.error, false);
+  async function loadPackages() {
+    try {
+      const response = await fetch(API_URL);
+      if (!response.ok) throw new Error(await response.text());
+      const packages = await response.json();
+      
+      const tbody = document.querySelector('#packagesTable tbody');
+      tbody.innerHTML = packages.map(pkg => `
+        <tr>
+          <td>${pkg.id}</td>
+          <td>${pkg.apartment_number}</td>
+          <td>${pkg.sender}</td>
+          <td>${formatDate(pkg.delivery_date)}</td>
+          <td>${pkg.status}</td>
+          <td>
+            ${pkg.status === 'pendiente' 
+              ? `<button onclick="markAsRetirado(${pkg.id})">Retirar</button>` 
+              : ''
             }
+          </td>
+        </tr>
+      `).join('');
+    } catch (error) {
+      showToast("Error al cargar paquetes", false);
+      console.error(error);
+    }
+  }
+
+  document.getElementById('packageForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearErrors();
+
+    const formData = {
+      apartment_number: document.getElementById('apartment_number').value.trim(),
+      sender: document.getElementById('sender').value.trim(),
+      delivery_date: document.getElementById('delivery_date').value,
+      status: document.getElementById('status').value.trim(),
+      qr_code: document.getElementById('qr_code').value.trim(),
+      notes: document.getElementById('notes').value.trim()
+    };
+
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        document.getElementById('packageForm').reset();
+        showToast("Paquete registrado con éxito");
+        loadPackages();
+      } else {
+        if (data.type === "ValidationError") {
+          const field = data.error.match(/campo (\w+)/i)?.[1];
+          if (field) {
+            const input = document.getElementById(field);
+            input?.classList.add("error-field");
+            document.getElementById(`${field}_error`).textContent = data.error;
           } else {
-            throw new Error(data.error);
+            showToast(data.error, false);
           }
+        } else {
+          throw new Error(data.error);
         }
-      } catch (error) {
-        showToast(error.message || "Error al registrar el paquete", false);
-        console.error(error);
       }
+    } catch (error) {
+      showToast(error.message || "Error al registrar el paquete", false);
+      console.error(error);
+    }
+  });
+
+  async function markAsRetirado(id) {
+    try {
+    const response = await fetch(`${API_URL}/${id}/status`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ status: 'retirado' })
     });
 
-    function formatDate(dateString) {
-      const date = new Date(dateString);
-      return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    if (response.ok) {
+      showToast("Estado actualizado a retirado ✅");
+      loadPackages(); // recarga tabla
+    } else {
+      const error = await response.json();
+      showToast(error.error || "Error al actualizar estado", false);
     }
+  } catch (err) {
+    console.error(err);
+    showToast("Error al actualizar estado", false);
+  }
+}
 
-    // Cargar paquetes al iniciar
-    loadPackages();
-  </script>
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+  }
+
+  // Cargar paquetes al iniciar
+  loadPackages();
+</script>
+
 </body>
 </html>

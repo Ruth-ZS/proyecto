@@ -5,6 +5,7 @@ import {
   getPackageById
 } from "../database/models/package.ts";
 import { registerPackageService } from "../services/packageService.ts";
+import { updateStatusById } from "../database/models/package.ts";
 
 export async function registerPackage(ctx: RouterContext) {
   try {

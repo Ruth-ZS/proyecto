@@ -96,14 +96,6 @@ async function getPackageById(id: number): Promise<Package | null> {
   }
 }
 
-export {
-  createPackagesTable,
-  insertPackage,
-  getAllPackages,
-  getPackageById,
-  Package,
-};
-
 
 //para actualizar datos del paquete en estado pendiente
 export async function updateStatusById(id: number, status: string, pickup_date: Date | null): Promise<boolean> {
@@ -115,9 +107,20 @@ export async function updateStatusById(id: number, status: string, pickup_date: 
        WHERE id = $3 AND status = 'pendiente'`,
       [status, pickup_date?.toISOString() ?? null, id]
     );
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   } finally {
     client.release();
   }
 }
+
+export {
+  createPackagesTable,
+  insertPackage,
+  getAllPackages,
+  getPackageById,
+};
+
+export type { Package };
+
+
 
